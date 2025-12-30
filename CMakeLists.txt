@@ -9,7 +9,7 @@ add_executable(dcm
     src/controller/controller.cpp
     src/scanner/FileScanner.cpp
     src/storage/Database.cpp
-    src/analysis/analyzer.cpp
+    src/analysis/analyser.cpp
 )
 
 target_include_directories(dcm PRIVATE src)
