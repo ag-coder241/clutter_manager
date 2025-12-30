@@ -6,16 +6,48 @@
 
 namespace fs = std::filesystem;
 
-std::vector<FileInfo> FileScanner::scanDirectory(const std::string& directoryPath){
+std::vector<FileInfo> FileScanner::scanDirectory(const std::string& rootPath){
     std::vector<FileInfo> results;
+    scanRecursive(rootPath, results);
+    return results;
+}
+
+bool FileScanner::shouldIgnore(const std::string& path) const {
+    static const std::vector<std::string> ignorePatterns = {
+        "/.git",
+        "/node_modules",
+        "/Library/Caches",
+        "/Library/Logs"
+    };
+
+    for (const auto& pattern : ignorePatterns) {
+        if (path.find(pattern) != std::string::npos) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void FileScanner::scanRecursive(const std::string& path, std::vector<FileInfo>& results){
+
+    if(shouldIgnore(path)){
+        return;
+    }
     try{
-        for(const auto& entry : fs::directory_iterator(directoryPath)){
-            // non recursive scanning
+        for(const auto& entry : fs::directory_iterator(path)){
+
+            // recursive scanning
+
+            try{
             FileInfo info;
             info.path = entry.path().string();
-            info.isDirectory = entry.is_directory();
 
-            if(!info.isDirectory){
+            fs::file_status status = entry.symlink_status();
+
+            info.isSymLink = fs::is_symlink(status);
+            info.isDirectory = fs::is_directory(status);
+
+            if(!info.isDirectory && !info.isSymLink){
                 info.size = entry.file_size();
             } else{
                 info.size = 0;
@@ -34,10 +66,22 @@ std::vector<FileInfo> FileScanner::scanDirectory(const std::string& directoryPat
             info.lastAcess = info.lastModified; // for now
 
             results.push_back(info);
+
+            // recurse if it's a directory and not a symlink
+
+            if(info.isDirectory && !info.isSymLink){
+                scanRecursive(info.path, results);
+
+            }
+        } catch (const fs::filesystem_error&){
+            // skip this entry
+            continue;
+        }
         }
         } catch(const fs::filesystem_error& e){
             std::cerr << "Filesystem error: " << e.what() << std::endl;
         }
 
-    return results;
 }
+
+

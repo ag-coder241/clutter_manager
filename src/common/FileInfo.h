@@ -11,4 +11,5 @@ struct FileInfo {
     std::time_t lastAcess; 
     std::time_t lastModified;
     bool isDirectory;
+    bool isSymLink;
 };

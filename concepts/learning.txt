@@ -1,0 +1,47 @@
+
+1. Recursive directory scanning & symlink safety - 
+a symbolic link is a file that points to another path
+rule - never recurse into directory symlinks
+detect file symlinks and we will include them in meta deta but we will not follow them as it can 
+lead to duplicate counting.
+
+every file system object has inode. the inode stores (type, permissions, timestamps etc).
+stat(path) = follows symlink and gives info about path
+lstat(path) = doesn't follow the link, only gives info about the symlink node itself
+
+scanning logic - 
+If symlink:
+    record it
+    do NOT recurse
+Else if directory:
+    // directory and not a symlink
+    record it
+    recurse
+Else:
+    record file
+
+Hidden File - any file that begins with "."
+
+type of files - 
+1. user files
+2. metadata files
+3. system files
+
+at the analysis level we will classify the files into categories.
+
+2. Filesystem permissions & access errors - 
+
+if directory level failure - skip the directory
+if file level failure - skip only that file
+
+try open directory
+    for each entry
+        try read metadata
+            record file
+        catch
+            skip this entry
+catch
+    skip directory
+
+3. Performance and Scalability - 
+

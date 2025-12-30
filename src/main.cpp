@@ -5,7 +5,7 @@ int main(){
     FileScanner scanner; // making a object of the class
 
     std::string path = std::getenv("HOME");
-    path += "/test_scan"; // for testing purposes
+    path += "/Downloads"; // for testing purposes
 
     auto files = scanner.scanDirectory(path);
 
