@@ -13,3 +13,6 @@ add_executable(dcm
 )
 
 target_include_directories(dcm PRIVATE src)
+find_package(SQLite3 REQUIRED)
+target_link_libraries(dcm SQLite::SQLite3)
+

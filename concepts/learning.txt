@@ -44,4 +44,8 @@ catch
     skip directory
 
 3. Performance and Scalability - 
+ ignore specific directory
+ incremental scanning - Only process files that have changed since the last scan
 
+ SQLite Schema
+ 
