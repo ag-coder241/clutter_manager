@@ -8,6 +8,9 @@
 Controller::Controller(const std::string& rootPath) : rootPath(rootPath) {}; // constructor
 
 void Controller::runScan() {
+
+    std::time_t scanStart = std::time(nullptr);
+
     std::cout << "Starting scan at: " << rootPath << std::endl;
 
     FileScanner scanner;
@@ -24,6 +27,8 @@ void Controller::runScan() {
     for(const auto& file: files){
         db.upsertFile(file);
     }
+
+    db.markDeletedFiles(scanStart);
 
     std::cout << "Scan completed. Files processed: "
               << files.size() << std::endl;

@@ -48,4 +48,11 @@ catch
  incremental scanning - Only process files that have changed since the last scan
 
  SQLite Schema
+ currently - (path (PRIMARY KEY), size, last_modified(integer), is_directory, is_symlink, last_scanner(integer))
+ using recursive scanning 
+ incremental scanning - using UPSERT(insert, update, skip)
+
+4. controller
+ coordinates between scanner and the database
  
+5. deletion detection

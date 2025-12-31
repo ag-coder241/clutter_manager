@@ -12,6 +12,7 @@ public:
     bool initialize();
 
     bool upsertFile(const FileInfo& file); // given this file sync it with the db
+    bool markDeletedFiles(std::time_t scanStart);
 
 private:
     sqlite3* db; // pointer to db

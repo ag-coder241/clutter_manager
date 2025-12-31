@@ -37,8 +37,17 @@ bool Database::initialize(){
         "is_symlink INTEGER NOT NULL, "
         "last_scanned INTEGER NOT NULL"
         ");"; 
-    
-    return execute(createTableSQL);
+
+    if(!execute(createTableSQL)){
+        return false;
+    }
+
+    execute(
+        "ALTER TABLE files "
+        "ADD COLUMN is_deleted INTEGER NOT NULL DEFAULT 0;"
+    ); // if SQLite fails then the column already exists
+
+    return true;
 }
 
 bool Database::execute(const std::string& sql){
@@ -79,8 +88,8 @@ bool Database::fileExists(const std::string &path, std::int64_t& size, std::int6
     return exists;
 }
 
-
 bool Database::upsertFile(const FileInfo& file) {
+
     // sync the file with the database
     std::int64_t dbSize = 0;
     std::int64_t dbLastModified = 0;
@@ -165,4 +174,17 @@ bool Database::upsertFile(const FileInfo& file) {
         sqlite3_finalize(stmt); // free 
         std::cout << "[DB] UPDATE: " << file.path << std::endl;
         return true;
+}
+
+bool Database::markDeletedFiles(std::time_t scanStart){
+    const char* sql = 
+        "UPDATE file SET is_deleted = 1 "
+        "WHERE last_scanned < ?;";
+    
+    sqlite3_stmt* stmt = nullptr;
+    sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
+    sqlite3_bind_int64(stmt, 1, scanStart);
+    sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    return true;
 }
