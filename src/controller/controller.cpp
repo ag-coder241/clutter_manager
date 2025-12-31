@@ -37,7 +37,9 @@ void Controller::runScan() {
     auto allFiles = db.fetchAllFiles(); // fetch files from the db for analysis
 
     ClutterAnalyzer analyzer;
-    auto results = analyzer.analyze(allFiles);
+    auto output = analyzer.analyze(allFiles);
+
+    auto results = analyzer.filterByFileType(output, FileType::PDF);
 
     if(results.size()){
     std::cout << "Clutter candidates found: "
@@ -52,19 +54,18 @@ void Controller::runScan() {
               << " | reason: ";
 
     switch (r.reason) {
-        case ClutterReason::deletedFile:
-            std::cout << "Deleted file";
+        case ClutterReason::unused:
+            std::cout << "unused file";
             break;
-        case ClutterReason::oldFile:
+        case ClutterReason::old:
             std::cout << "Old file";
             break;
-        case ClutterReason::largeFile:
+        case ClutterReason::large:
             std::cout << "Large file";
             break;
     }
 
     std::cout << std::endl;
 }
-
 
 }

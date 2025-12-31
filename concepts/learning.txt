@@ -68,3 +68,19 @@ we first mark it.
 old files
 large files 
 fetch data from the database in the form of FileInfo and pass to the analysis layer
+
+further analysis heuristic - 
+clutter_score = size * age * unused_factor
+
+Unused files (highest priority)
+old files (exits and not unused)
+large files (exceed a limit)
+
+file type awareness = we should be able to analyse basis on the file type we give 
+duplicate file detection
+
+CLI enhancements(basic)
+
+Design decisions doc 
+Architecture doc
+README 

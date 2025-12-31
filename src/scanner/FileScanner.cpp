@@ -63,7 +63,7 @@ void FileScanner::scanRecursive(const std::string& path, std::vector<FileInfo>& 
 
             info.lastModified = std::chrono::system_clock::to_time_t(sctp);
 
-            info.lastAcess = info.lastModified; // for now
+            info.lastAccess = info.lastModified; // for now
 
             results.push_back(info);
 

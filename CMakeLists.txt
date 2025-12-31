@@ -10,6 +10,7 @@ add_executable(dcm
     src/scanner/FileScanner.cpp
     src/storage/Database.cpp
     src/analysis/ClutterAnalysis.cpp
+    src/analysis/FileTypeUtils.cpp
 )
 
 target_include_directories(dcm PRIVATE src)
