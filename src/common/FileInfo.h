@@ -10,6 +10,7 @@ struct FileInfo {
     std::uintmax_t size; // file size in bytes
     std::time_t lastAcess; 
     std::time_t lastModified;
-    bool isDirectory;
-    bool isSymLink;
+    bool isDirectory = false;
+    bool isSymLink = false;
+    bool isDeleted = false;
 };

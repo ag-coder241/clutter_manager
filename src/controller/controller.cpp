@@ -1,6 +1,7 @@
 #include "controller.h"
 #include "../scanner/FileScanner.h"
 #include "../storage/Database.h"
+#include "../analysis/ClutterAnalysis.h"
 
 #include <iostream>
 #include <filesystem>
@@ -32,5 +33,38 @@ void Controller::runScan() {
 
     std::cout << "Scan completed. Files processed: "
               << files.size() << std::endl;
+
+    auto allFiles = db.fetchAllFiles(); // fetch files from the db for analysis
+
+    ClutterAnalyzer analyzer;
+    auto results = analyzer.analyze(allFiles);
+
+    if(results.size()){
+    std::cout << "Clutter candidates found: "
+          << results.size() << std::endl;
+    } else{
+    std::cout << "No clutter candidates found" << std::endl;
+    }
+
+   for (const auto& r : results) {
+    std::cout << "- " << r.path
+              << " | size: " << r.size
+              << " | reason: ";
+
+    switch (r.reason) {
+        case ClutterReason::deletedFile:
+            std::cout << "Deleted file";
+            break;
+        case ClutterReason::oldFile:
+            std::cout << "Old file";
+            break;
+        case ClutterReason::largeFile:
+            std::cout << "Large file";
+            break;
+    }
+
+    std::cout << std::endl;
+}
+
 
 }

@@ -56,3 +56,15 @@ catch
  coordinates between scanner and the database
  
 5. deletion detection
+using last_scanned metric in our database
+at start of scan = scan_start_time
+during scan = we update last_scan
+
+if after scan last_scanned < scan_start time this file was deleted
+we first mark it.
+
+6. ANALYSER
+
+old files
+large files 
+fetch data from the database in the form of FileInfo and pass to the analysis layer

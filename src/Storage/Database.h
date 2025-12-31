@@ -3,6 +3,7 @@
 #include <string>
 #include <sqlite3.h>
 #include "../common/FileInfo.h"
+#include <vector>
 
 class Database{
 public:
@@ -13,6 +14,7 @@ public:
 
     bool upsertFile(const FileInfo& file); // given this file sync it with the db
     bool markDeletedFiles(std::time_t scanStart);
+    std::vector<FileInfo> fetchAllFiles(); // fetch the files fromm the db
 
 private:
     sqlite3* db; // pointer to db

@@ -177,6 +177,7 @@ bool Database::upsertFile(const FileInfo& file) {
 }
 
 bool Database::markDeletedFiles(std::time_t scanStart){
+
     const char* sql = 
         "UPDATE file SET is_deleted = 1 "
         "WHERE last_scanned < ?;";
@@ -187,4 +188,46 @@ bool Database::markDeletedFiles(std::time_t scanStart){
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
     return true;
+}
+
+std::vector<FileInfo> Database::fetchAllFiles() {
+    std::vector<FileInfo> files;
+
+    const char* sql = 
+        "SELECT path, size, last_modified, "
+        "is_directory, is_symlink, is_deleted "
+        "FROM files;";
+    
+    sqlite3_stmt* stmt = nullptr;
+
+    if(sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        return files;
+    }
+
+    while(sqlite3_step(stmt) == SQLITE_ROW) {
+        // loop until ROWs exhausted
+        FileInfo file;
+
+        file.path = reinterpret_cast<const char*>(
+            sqlite3_column_text(stmt,0)
+        );
+        file.size = static_cast<uintmax_t>(
+            sqlite3_column_int64(stmt,1)
+        );
+        file.lastModified =
+            sqlite3_column_int64(stmt, 2);
+        file.isDirectory =
+            sqlite3_column_int(stmt, 3);
+        file.isSymLink =
+            sqlite3_column_int(stmt, 4) != 0; // in sqlite we can't store integer 
+            // so here we are converting int to boolean type
+        file.isDeleted =
+            sqlite3_column_int(stmt, 5) != 0;
+
+        files.push_back(file);
+        
+    }
+
+    sqlite3_finalize(stmt);
+    return files;
 }
