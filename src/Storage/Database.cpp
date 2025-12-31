@@ -1,6 +1,12 @@
 #include "Database.h"
 #include <iostream>
 
+enum class upsertAction {
+    Inserted,
+    Updated,
+    Unchanged,
+};
+
 Database::Database(const std::string& dbPath): db(nullptr), path(dbPath){}; // constructor
 
 Database::~Database(){
@@ -108,7 +114,8 @@ bool Database::upsertFile(const FileInfo& file) {
         // in the SQL statements
 
         sqlite3_step(stmt);
-        sqlite3_finalize(stmt); // free 
+        sqlite3_finalize(stmt); // free
+        //std::cout << "[DB] INSERT: " << file.path << std::endl; 
         return true;
     }
 
@@ -131,6 +138,7 @@ bool Database::upsertFile(const FileInfo& file) {
 
             sqlite3_step(stmt);
             sqlite3_finalize(stmt); // free 
+            //std::cout << "[DB] SKIP (unchanged): " << file.path << std::endl;
             return true;
 
         }
@@ -155,5 +163,6 @@ bool Database::upsertFile(const FileInfo& file) {
 
         sqlite3_step(stmt);
         sqlite3_finalize(stmt); // free 
+        std::cout << "[DB] UPDATE: " << file.path << std::endl;
         return true;
 }

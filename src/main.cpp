@@ -26,20 +26,29 @@
 // }
 
 
-#include <iostream>
-#include "storage/Database.h"
-#include <filesystem>
+// #include <iostream>
+// #include "storage/Database.h"
+// #include <filesystem>
+
+// int main() {
+
+//     std::filesystem::path dbPath = std::filesystem::current_path().parent_path() / "data" / "clutter.db";
+//     Database db(dbPath.string());// making an object with path to the db
+
+//     if (!db.initialize()) {
+//         std::cerr << "Database initialization failed\n";
+//         return 1;
+//     }
+
+//     std::cout << "Database initialized successfully\n";
+//     return 0;
+// }
+
+#include "controller/controller.h"
 
 int main() {
-
-    std::filesystem::path dbPath = std::filesystem::current_path().parent_path() / "data" / "clutter.db";
-    Database db(dbPath.string());// making an object with path to the db
-
-    if (!db.initialize()) {
-        std::cerr << "Database initialization failed\n";
-        return 1;
-    }
-
-    std::cout << "Database initialized successfully\n";
+    Controller controller("/Users/akashgoyal2004/Downloads");
+    controller.runScan();
     return 0;
 }
+
